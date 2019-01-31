@@ -1,0 +1,130 @@
+!
+
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname sea-c3745x-access-R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+ip cef
+!
+!
+!
+!
+no ip domain lookup
+ip auth-proxy max-nodata-conns 3
+ip admission max-nodata-conns 3
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip tcp synwait-time 5
+! 
+!
+!
+!
+!
+interface FastEthernet0/0
+ ip address 10.0.0.2 255.255.255.254
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ ip address 6.0.0.2 255.0.0.0
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ ip address 10.0.0.4 255.255.255.254
+ duplex auto
+ speed auto
+!
+interface FastEthernet2/0
+ ip address 12.0.0.2 255.255.0.0
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet3/0
+ ip address 12.0.0.2 255.255.0.0
+ duplex auto
+ speed auto
+!
+router ospf 100
+ log-adjacency-changes
+ network 10.0.0.0 0.0.0.255 area 0
+ network 12.0.0.0 0.0.255.255 area 0
+!
+router bgp 8000
+ no synchronization
+ bgp log-neighbor-changes
+ network 12.0.0.0 mask 255.255.0.0
+ neighbor 6.0.0.1 remote-as 6000
+ neighbor 6.0.0.1 ebgp-multihop 3
+ neighbor 6.0.0.1 next-hop-self
+ neighbor 10.0.0.3 remote-as 8000
+ neighbor 10.0.0.3 ebgp-multihop 2
+ neighbor 10.0.0.3 next-hop-self
+ neighbor 10.0.0.5 remote-as 8000
+ neighbor 10.0.0.5 ebgp-multihop 2
+ neighbor 10.0.0.5 next-hop-self
+ no auto-summary
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+no cdp log mismatch duplex
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login
+!
+!
+end
